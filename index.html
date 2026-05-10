@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Skyline RP · Форум з профілями</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0f1219;
+            font-family: 'Open Sans', sans-serif;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #1e222d; }
+        ::-webkit-scrollbar-thumb { background: #f5821f; border-radius: 10px; }
+        a { text-decoration: none; color: #f5821f; transition: 0.15s; }
+        a:hover { color: #ff9f4a; }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header */
+        .forum-header {
+            background: #05070c;
+            border-bottom: 1px solid #282e3a;
+            padding: 18px 0;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .logo h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f5821f, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo p {
+            font-size: 0.75rem;
+            color: #8e9aaf;
+        }
+        .user-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .user-bar span {
+            font-size: 0.9rem;
+            color: #f5821f;
+        }
+        .user-bar button {
+            background: #f5821f;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .user-bar .logout-btn {
+            background: #3a3f55;
+        }
+        /* Nav */
+        .forum-nav {
+            background: #0b0e16;
+            border-bottom: 1px solid #252c3a;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            padding: 12px 0;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #cdd9f4;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .nav-links a.active, .nav-links a:hover { color: #f5821f; }
+        /* Основна сітка */
+        .forum-wrapper {
+            display: flex;
+            gap: 35px;
+            margin: 35px 0;
+            flex-wrap: wrap;
+        }
+        .forum-main {
+            flex: 2.8;
+            min-width: 280px;
+        }
+        .forum-side {
+            flex: 1.3;
+            min-width: 260px;
+        }
+        .category {
+            background: #12161f;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #262e3c;
+            overflow: hidden;
+        }
+        .cat-head {
+            background: #1a1f2b;
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            border-left: 4px solid #f5821f;
+        }
+        .forum-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border-bottom: 1px solid #1d2330;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+        .forum-row:hover { background: #181e2a; }
+        .forum-info { flex: 2; }
+        .forum-info h4 { font-size: 1rem; margin-bottom: 4px; }
+        .forum-info p { font-size: 0.7rem; color: #8f9bb3; }
+        .forum-stats {
+            text-align: center;
+            width: 100px;
+            font-size: 0.75rem;
+        }
+        .last-post {
+            width: 190px;
+            font-size: 0.7rem;
+            text-align: right;
+        }
+        .topic-list {
+            background: #12161f;
+            border-radius: 10px;
+            border: 1px solid #262e3c;
+            margin-bottom: 30px;
+        }
+        .topic-header {
+            background: #1a1f2b;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 1rem;
+            border-left: 3px solid #f5821f;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-bottom: 1px solid #1d2330;
+            cursor: pointer;
+        }
+        .topic-item:hover { background: #1a1f2b; }
+        .topic-icon { width: 36px; text-align: center; color: #f5821f; }
+        .topic-info { flex: 1; }
+        .topic-title { font-weight: 600; font-size: 0.9rem; }
+        .topic-meta { font-size: 0.65rem; color: #8e9dbd; }
+        .messages-container {
+            background: #12161f;
+            border-radius: 10px;
+            border: 1px solid #262e3c;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .message {
+            background: #0f1119;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #f5821f;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .message-author { font-weight: bold; color: #f5821f; }
+        .reply-form, .new-topic-form {
+            background: #12161f;
+            border-radius: 10px;
+            border: 1px solid #262e3c;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: #0b0e16;
+            border: 1px solid #2a2f3c;
+            padding: 10px;
+            border-radius: 8px;
+            color: #eef2ff;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        button {
+            background: #f5821f;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: #e06e10; }
+        .back-btn {
+            background: #3a3f55;
+            margin-right: 10px;
+        }
+        .side-block {
+            background: #12161f;
+            border-radius: 10px;
+            border: 1px solid #262e3c;
+            margin-bottom: 25px;
+            padding: 18px;
+        }
+        .side-title {
+            font-weight: 700;
+            border-left: 3px solid #f5821f;
+            padding-left: 12px;
+            margin-bottom: 14px;
+        }
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.85rem;
+        }
+        /* Модальне вікно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #12161f;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #f5821f;
+        }
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #f5821f;
+        }
+        .modal-content input {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        footer {
+            background: #05080e;
+            text-align: center;
+            padding: 28px 0;
+            border-top: 1px solid #1a1f2c;
+            margin-top: 40px;
+            font-size: 0.75rem;
+        }
+        @media (max-width: 800px) {
+            .forum-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="forum-header">
+    <div class="container">
+        <div class="header-row">
+            <div class="logo">
+                <h1>SKYLINE RP</h1>
+                <p>Український МТА форум</p>
+            </div>
+            <div class="user-bar" id="userBar">
+                <!-- Динамічно заповнюється -->
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav class="forum-nav">
+    <div class="container">
+        <ul class="nav-links">
+            <li><a id="navMain" class="active">Головна</a></li>
+            <li><a id="navRules">Правила</a></li>
+            <li><a href="https://discord.gg/nJKSYm96" target="_blank">Discord</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container" id="appContainer"></div>
+
+<footer>
+    <div class="container">
+        <p>© 2025 Skyline RolePlay | <a href="https://discord.gg/nJKSYm96" target="_blank" style="color:#f5821f;">Discord сервер</a></p>
+    </div>
+</footer>
+
+<!-- Модальне вікно логіну/реєстрації -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Вхід</h2>
+        <input type="text" id="loginUsername" placeholder="Логін">
+        <input type="password" id="loginPassword" placeholder="Пароль">
+        <div id="modalExtraFields" style="display:none;">
+            <input type="text" id="regDisplayName" placeholder="Ім'я персонажа">
+        </div>
+        <div class="modal-buttons">
+            <button id="modalActionBtn">Увійти</button>
+            <button id="modalSwitchBtn">Реєстрація</button>
+            <button id="modalCloseBtn">Скасувати</button>
+        </div>
+        <div id="modalError" style="color: #ff6a00; margin-top: 10px;"></div>
+    </div>
+</div>
+
+<script>
+    // ==================== СИСТЕМА КОРИСТУВАЧІВ ====================
+    let currentUser = null; // { login, displayName }
+
+    function loadUsers() {
+        const users = localStorage.getItem('skyline_users');
+        if (!users) {
+            // Створюємо тестового адміна
+            const defaultUsers = [
+                { login: "admin", password: btoa("admin123"), displayName: "Admin" }
+            ];
+            localStorage.setItem('skyline_users', JSON.stringify(defaultUsers));
+            return defaultUsers;
+        }
+        return JSON.parse(users);
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem('skyline_users', JSON.stringify(users));
+    }
+
+    function register(login, password, displayName) {
+        const users = loadUsers();
+        if (users.find(u => u.login === login)) return { success: false, error: "Користувач з таким логіном вже існує" };
+        if (!login || !password || !displayName) return { success: false, error: "Заповніть всі поля" };
+        users.push({ login, password: btoa(password), displayName });
+        saveUsers(users);
+        return { success: true };
+    }
+
+    function login(login, password) {
+        const users = loadUsers();
+        const user = users.find(u => u.login === login && u.password === btoa(password));
+        if (!user) return { success: false, error: "Невірний логін або пароль" };
+        return { success: true, user };
+    }
+
+    function updateUserBar() {
+        const bar = document.getElementById('userBar');
+        if (currentUser) {
+            bar.innerHTML = `<span><i class="fas fa-user"></i> ${escapeHtml(currentUser.displayName)}</span>
+                             <button id="profileBtn">Профіль</button>
+                             <button id="logoutBtn" class="logout-btn">Вихід</button>`;
+            document.getElementById('profileBtn')?.addEventListener('click', () => {
+                alert(`Ваш профіль:\nЛогін: ${currentUser.login}\nІм'я: ${currentUser.displayName}`);
+            });
+            document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                currentUser = null;
+                localStorage.removeItem('skyline_current_user');
+                updateUserBar();
+                render(); // перерендерити головну
+            });
+        } else {
+            bar.innerHTML = `<button id="loginBtn">Вхід / Реєстрація</button>`;
+            document.getElementById('loginBtn')?.addEventListener('click', showAuthModal);
+        }
+    }
+
+    function showAuthModal() {
+        const modal = document.getElementById('authModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const extraFields = document.getElementById('modalExtraFields');
+        const actionBtn = document.getElementById('modalActionBtn');
+        const switchBtn = document.getElementById('modalSwitchBtn');
+        const errorDiv = document.getElementById('modalError');
+        let isLoginMode = true;
+
+        modal.style.display = 'flex';
+        modalTitle.innerText = 'Вхід';
+        extraFields.style.display = 'none';
+        actionBtn.innerText = 'Увійти';
+        switchBtn.innerText = 'Реєстрація';
+        errorDiv.innerText = '';
+
+        const loginInput = document.getElementById('loginUsername');
+        const passInput = document.getElementById('loginPassword');
+        const displayNameInput = document.getElementById('regDisplayName');
+        loginInput.value = '';
+        passInput.value = '';
+        displayNameInput.value = '';
+
+        const switchMode = () => {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                modalTitle.innerText = 'Вхід';
+                extraFields.style.display = 'none';
+                actionBtn.innerText = 'Увійти';
+                switchBtn.innerText = 'Реєстрація';
+            } else {
+                modalTitle.innerText = 'Реєстрація';
+                extraFields.style.display = 'block';
+                actionBtn.innerText = 'Зареєструватися';
+                switchBtn.innerText = 'Назад до входу';
+            }
+            errorDiv.innerText = '';
+        };
+
+        const performAction = () => {
+            const loginVal = loginInput.value.trim();
+            const passVal = passInput.value;
+            if (isLoginMode) {
+                const res = login(loginVal, passVal);
+                if (res.success) {
+                    currentUser = res.user;
+                    localStorage.setItem('skyline_current_user', JSON.stringify(currentUser));
+                    modal.style.display = 'none';
+                    updateUserBar();
+                    render();
+                } else {
+                    errorDiv.innerText = res.error;
+                }
+            } else {
+                const displayNameVal = displayNameInput.value.trim();
+                const res = register(loginVal, passVal, displayNameVal);
+                if (res.success) {
+                    const loginRes = login(loginVal, passVal);
+                    if (loginRes.success) {
+                        currentUser = loginRes.user;
+                        localStorage.setItem('skyline_current_user', JSON.stringify(currentUser));
+                        modal.style.display = 'none';
+                        updateUserBar();
+                        render();
+                    }
+                } else {
+                    errorDiv.innerText = res.error;
+                }
+            }
+        };
+
+        actionBtn.onclick = performAction;
+        switchBtn.onclick = switchMode;
+        document.getElementById('modalCloseBtn').onclick = () => modal.style.display = 'none';
+    }
+
+    // ==================== ДАНІ ФОРУМУ ====================
+    let categories = [
+        { id: 1, name: "ОФІЦІЙНІ ФОРУМИ", description: "Новини, правила, звернення" },
+        { id: 2, name: "ІГРОВА СПІЛЬНОТА", description: "Кримінал, держава, бізнес" },
+        { id: 3, name: "ТЕХНІЧНА ПІДТРИМКА", description: "Лаунчер, помилки" }
+    ];
+
+    let forums = [
+        { id: 1, categoryId: 1, name: "Новини проекту", description: "Офіційні анонси", topicsCount: 0, postsCount: 0, lastPost: "" },
+        { id: 2, categoryId: 1, name: "Правила та вайтлист", description: "Ознайомтеся", topicsCount: 0, postsCount: 0, lastPost: "" },
+        { id: 3, categoryId: 2, name: "Кримінальний світ", description: "Мафія, банди", topicsCount: 0, postsCount: 0, lastPost: "" },
+        { id: 4, categoryId: 2, name: "Державні структури", description: "Поліція, мерія", topicsCount: 0, postsCount: 0, lastPost: "" },
+        { id: 5, categoryId: 3, name: "Встановлення та лаунчер", description: "Проблеми зі стартом", topicsCount: 0, postsCount: 0, lastPost: "" }
+    ];
+
+    let topics = [];
+    let messages = [];
+
+    function loadForumData() {
+        const storedTopics = localStorage.getItem('skyline_topics');
+        const storedMessages = localStorage.getItem('skyline_messages');
+        if (storedTopics) topics = JSON.parse(storedTopics);
+        else topics = [];
+        if (storedMessages) messages = JSON.parse(storedMessages);
+        else messages = [];
+        updateCounters();
+    }
+
+    function saveForumData() {
+        localStorage.setItem('skyline_topics', JSON.stringify(topics));
+        localStorage.setItem('skyline_messages', JSON.stringify(messages));
+        updateCounters();
+    }
+
+    function updateCounters() {
+        for (let forum of forums) {
+            const forumTopics = topics.filter(t => t.forumId === forum.id);
+            let posts = 0;
+            for (let topic of forumTopics) {
+                posts += messages.filter(m => m.topicId === topic.id).length;
+            }
+            forum.topicsCount = forumTopics.length;
+            forum.postsCount = posts;
+            if (forumTopics.length > 0) {
+                const lastTopic = forumTopics.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+                forum.lastPost = lastTopic.createdAt;
+            } else forum.lastPost = "Немає тем";
+        }
+    }
+
+    // Стан UI
+    let currentView = 'main';
+    let currentForumId = null;
+    let currentTopicId = null;
+
+    function render() {
+        const container = document.getElementById('appContainer');
+        if (currentView === 'main') {
+            container.innerHTML = renderMain();
+        } else if (currentView === 'threadList') {
+            container.innerHTML = renderThreadList(currentForumId);
+        } else if (currentView === 'threadView') {
+            container.innerHTML = renderThreadView(currentTopicId);
+        }
+        attachEvents();
+    }
+
+    function renderMain() {
+        let html = `<div class="forum-wrapper"><div class="forum-main">`;
+        for (let cat of categories) {
+            const catForums = forums.filter(f => f.categoryId === cat.id);
+            if (!catForums.length) continue;
+            html += `<div class="category"><div class="cat-head"><i class="fas fa-folder"></i> ${cat.name}</div>`;
+            for (let forum of catForums) {
+                html += `<div class="forum-row" data-forum-id="${forum.id}">
+                            <div class="forum-info"><h4>${escapeHtml(forum.name)}</h4><p>${escapeHtml(forum.description)}</p></div>
+                            <div class="forum-stats">${forum.topicsCount} тем<br>${forum.postsCount} постів</div>
+                            <div class="last-post">${forum.lastPost}</div>
+                         </div>`;
+            }
+            html += `</div>`;
+        }
+        html += `</div><div class="forum-side"><div class="side-block"><div class="side-title">Статистика</div>
+                <div class="stat-line"><span>Всього тем:</span><span>${topics.length}</span></div>
+                <div class="stat-line"><span>Всього повідомлень:</span><span>${messages.length}</span></div>
+                </div></div></div>`;
+        return html;
+    }
+
+    function renderThreadList(forumId) {
+        const forum = forums.find(f => f.id === forumId);
+        if (!forum) return "<p>Форум не знайдено</p>";
+        let html = `<div class="topic-list"><div class="topic-header">
+                        <span>${escapeHtml(forum.name)}</span>
+                        <button id="newTopicBtn">+ Нова тема</button>
+                    </div>`;
+        const forumTopics = topics.filter(t => t.forumId === forumId).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+        if (forumTopics.length === 0) {
+            html += `<div class="topic-item">Немає тем. Створіть першу!</div>`;
+        } else {
+            for (let topic of forumTopics) {
+                const replies = messages.filter(m => m.topicId === topic.id).length;
+                html += `<div class="topic-item" data-topic-id="${topic.id}">
+                            <div class="topic-icon"><i class="fas fa-file-alt"></i></div>
+                            <div class="topic-info">
+                                <div class="topic-title">${escapeHtml(topic.title)}</div>
+                                <div class="topic-meta">Автор: ${escapeHtml(topic.author)} • ${topic.createdAt}</div>
+                            </div>
+                            <div>${replies} відповідей</div>
+                         </div>`;
+            }
+        }
+        html += `<div style="padding:15px;"><button id="backToMainBtn" class="back-btn">← На головну</button></div></div>`;
+        return html;
+    }
+
+    function renderThreadView(topicId) {
+        const topic = topics.find(t => t.id === topicId);
+        if (!topic) return "<p>Тему не знайдено</p>";
+        const topicMessages = messages.filter(m => m.topicId === topicId).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+        let html = `<div class="messages-container">
+                        <div class="topic-header"><span>${escapeHtml(topic.title)}</span><span>Автор: ${escapeHtml(topic.author)} • ${topic.createdAt}</span></div>`;
+        if (topicMessages.length === 0) {
+            html += `<div class="message">Немає повідомлень. Напишіть першим!</div>`;
+        } else {
+            for (let msg of topicMessages) {
+                html += `<div class="message"><div class="message-header"><span class="message-author">${escapeHtml(msg.author)}</span><span>${msg.createdAt}</span></div>
+                         <div class="message-content">${escapeHtml(msg.content).replace(/\n/g,'<br>')}</div></div>`;
+            }
+        }
+        html += `</div>`;
+        if (currentUser) {
+            html += `<div class="reply-form">
+                        <div class="form-group"><label>Ваше ім'я (зареєстровано)</label><input type="text" id="replyAuthor" value="${escapeHtml(currentUser.displayName)}" disabled></div>
+                        <div class="form-group"><label>Повідомлення</label><textarea id="replyContent" placeholder="Напишіть відповідь..."></textarea></div>
+                        <button id="submitReplyBtn">Відповісти</button>
+                        <button id="backToForumBtn" class="back-btn">← Назад до тем</button>
+                    </div>`;
+        } else {
+            html += `<div class="reply-form"><p style="color:#f5821f;">Увійдіть, щоб написати повідомлення.</p>
+                     <button id="backToForumBtn" class="back-btn">← Назад до тем</button></div>`;
+        }
+        return html;
+    }
+
+    function showNewTopicForm(forumId) {
+        const forum = forums.find(f => f.id === forumId);
+        if (!currentUser) {
+            alert("Спочатку увійдіть, щоб створити тему.");
+            return;
+        }
+        const html = `<div class="new-topic-form">
+                        <h3>Нова тема: ${escapeHtml(forum.name)}</h3>
+                        <div class="form-group"><label>Ваше ім'я</label><input type="text" id="newTopicAuthor" value="${escapeHtml(currentUser.displayName)}" disabled></div>
+                        <div class="form-group"><label>Назва теми</label><input type="text" id="newTopicTitle" placeholder="Заголовок"></div>
+                        <div class="form-group"><label>Текст</label><textarea id="newTopicContent" placeholder="Перше повідомлення..."></textarea></div>
+                        <button id="createTopicBtn">Створити</button>
+                        <button id="cancelTopicBtn" class="back-btn">Скасувати</button>
+                      </div>`;
+        const container = document.getElementById('appContainer');
+        container.innerHTML = html;
+        document.getElementById('createTopicBtn').onclick = () => {
+            const title = document.getElementById('newTopicTitle').value.trim();
+            const content = document.getElementById('newTopicContent').value.trim();
+            if (!title || !content) { alert("Заповніть всі поля"); return; }
+            const newId = Date.now();
+            const now = new Date().toLocaleString();
+            topics.push({
+                id: newId,
+                forumId: forumId,
+                title: title,
+                author: currentUser.displayName,
+                createdAt: now,
+                views: 0
+            });
+            messages.push({
+                id: Date.now()+1,
+                topicId: newId,
+                author: currentUser.displayName,
+                content: content,
+                createdAt: now
+            });
+            saveForumData();
+            currentView = 'threadList';
+            currentForumId = forumId;
+            render();
+        };
+        document.getElementById('cancelTopicBtn').onclick = () => {
+            currentView = 'threadList';
+            render();
+        };
+    }
+
+    function addReply(topicId) {
+        if (!currentUser) { alert("Увійдіть, щоб відповісти"); return; }
+        const content = document.getElementById('replyContent')?.value.trim();
+        if (!content) { alert("Введіть текст"); return; }
+        messages.push({
+            id: Date.now(),
+            topicId: topicId,
+            author: currentUser.displayName,
+            content: content,
+            createdAt: new Date().toLocaleString()
+        });
+        saveForumData();
+        render();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.forum-row[data-forum-id]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                currentForumId = parseInt(el.dataset.forumId);
+                currentView = 'threadList';
+                render();
+            });
+        });
+        document.querySelectorAll('.topic-item[data-topic-id]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                currentTopicId = parseInt(el.dataset.topicId);
+                currentView = 'threadView';
+                render();
+            });
+        });
+        const newTopicBtn = document.getElementById('newTopicBtn');
+        if (newTopicBtn) newTopicBtn.onclick = () => showNewTopicForm(currentForumId);
+        const submitReply = document.getElementById('submitReplyBtn');
+        if (submitReply && currentTopicId) submitReply.onclick = () => addReply(currentTopicId);
+        const backToForum = document.getElementById('backToForumBtn');
+        if (backToForum) backToForum.onclick = () => { currentView = 'threadList'; render(); };
+        const backToMain = document.getElementById('backToMainBtn');
+        if (backToMain) backToMain.onclick = () => { currentView = 'main'; render(); };
+        document.getElementById('navMain').onclick = () => { currentView = 'main'; render(); };
+        document.getElementById('navRules').onclick = () => alert("Правила сервера: дотримуйтесь рольової гри.");
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Ініціалізація
+    (function init() {
+        const savedUser = localStorage.getItem('skyline_current_user');
+        if (savedUser) currentUser = JSON.parse(savedUser);
+        loadForumData();
+        updateUserBar();
+        render();
+    })();
+</script>
+</body>
+</html>
